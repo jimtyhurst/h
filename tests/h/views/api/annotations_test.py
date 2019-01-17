@@ -386,7 +386,7 @@ class TestUpdate(object):
     "AnnotationEvent", "links_service", "delete_annotation_service"
 )
 class TestDelete(object):
-    def test_it_deletes_then_annotation_from_storage(
+    def test_it_calls_the_delete_annotation_service(
         self, pyramid_request, delete_annotation_service
     ):
         context = mock.Mock()
