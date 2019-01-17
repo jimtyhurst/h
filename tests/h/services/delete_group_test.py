@@ -15,21 +15,21 @@ from h.services.annotation_delete import AnnotationDeleteService
 
 @pytest.mark.usefixtures("annotation_delete_service")
 class TestDeleteGroupService(object):
-    def test_delete_does_not_delete_public_group(self, svc, db_session, factories):
+    def test_it_does_not_delete_public_group(self, svc, db_session, factories):
         group = factories.Group()
         group.pubid = "__world__"
 
         with pytest.raises(DeletePublicGroupError):
             svc.delete(group)
 
-    def test_delete_deletes_group(self, svc, db_session, factories):
+    def test_it_deletes_group(self, svc, db_session, factories):
         group = factories.Group()
 
         svc.delete(group)
 
         assert group in db_session.deleted
 
-    def test_delete_deletes_annotations(
+    def test_it_deletes_annotations(
         self, svc, factories, pyramid_request, annotation_delete_service
     ):
         group = factories.Group()
@@ -44,7 +44,10 @@ class TestDeleteGroupService(object):
             [mock.call(annotations[0]), mock.call(annotations[1])], any_order=True
         )
 
-    def test_delete_group_factory(self, pyramid_request):
+
+@pytest.mark.usefixtures("annotation_delete_service")
+class TestDeleteGroupServiceFactory(object):
+    def test_it_returns_delete_group_service_instance(self, pyramid_request):
         svc = delete_group_service_factory(None, pyramid_request)
 
         assert isinstance(svc, DeleteGroupService)
