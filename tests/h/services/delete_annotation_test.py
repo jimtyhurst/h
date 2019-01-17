@@ -24,7 +24,7 @@ class TestDeleteAnnotationService(object):
 
         assert ann.updated == datetime.utcnow()
 
-    def test_it_publishes_event(self, svc, pyramid_request, factories, ann):
+    def test_it_publishes_a_delete_event(self, svc, pyramid_request, factories, ann):
         svc.delete(ann)
 
         expected_event = AnnotationEvent(pyramid_request, ann.id, "delete")
