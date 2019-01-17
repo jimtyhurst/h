@@ -10,10 +10,10 @@ from h.services.delete_group import (
     DeleteGroupService,
     DeletePublicGroupError,
 )
-from h.services.delete_annotation import DeleteAnnotationService
+from h.services.annotation_delete import AnnotationDeleteService
 
 
-@pytest.mark.usefixtures("delete_annotation_service")
+@pytest.mark.usefixtures("annotation_delete_service")
 class TestDeleteGroupService(object):
     def test_delete_does_not_delete_public_group(self, svc, db_session, factories):
         group = factories.Group()
@@ -30,7 +30,7 @@ class TestDeleteGroupService(object):
         assert group in db_session.deleted
 
     def test_delete_deletes_annotations(
-        self, svc, factories, pyramid_request, delete_annotation_service
+        self, svc, factories, pyramid_request, annotation_delete_service
     ):
         group = factories.Group()
         annotations = [
@@ -40,7 +40,7 @@ class TestDeleteGroupService(object):
 
         svc.delete(group)
 
-        delete_annotation_service.delete.assert_has_calls(
+        annotation_delete_service.delete.assert_has_calls(
             [mock.call(annotations[0]), mock.call(annotations[1])], any_order=True
         )
 
@@ -57,9 +57,9 @@ def svc(db_session, pyramid_request):
 
 
 @pytest.fixture
-def delete_annotation_service(pyramid_config):
+def annotation_delete_service(pyramid_config):
     service = mock.create_autospec(
-        DeleteAnnotationService, spec_set=True, instance=True
+        AnnotationDeleteService, spec_set=True, instance=True
     )
-    pyramid_config.register_service(service, name="delete_annotation")
+    pyramid_config.register_service(service, name="annotation_delete")
     return service
